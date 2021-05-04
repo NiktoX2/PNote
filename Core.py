@@ -1,8 +1,6 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from aboutAppWindow import *
-from aboutАuthor import *
 
 class Window(QMainWindow):
     def __init__(self, parent=None):
@@ -64,7 +62,7 @@ class Window(QMainWindow):
         self.langEng.triggered.connect(self.setLangEng)
 
         self.aboutAuthor = QAction("Автор", self)
-        self.aboutAuthor.triggered.connect(self.openaa)
+        self.aboutAuthor.triggered.connect(self.openAboutAuthor)
         self.aboutApp = QAction("Об приложении", self)
         self.aboutApp.triggered.connect(self.openAboutApp)
 
@@ -74,7 +72,8 @@ class Window(QMainWindow):
 
     @pyqtSlot()
     def open(self):
-        falname = QFileDialog.getOpenFileName(self, 'Открыть файл', '', 'Все файлы (*.*);;Текстовый файл (*.txt);;Python файлы (*.py)')[0]
+        falname = QFileDialog.getOpenFileName(self, 'Открыть файл', '',
+                                              'Все файлы (*.*);;Текстовый файл (*.txt);;Python файлы (*.py)')[0]
         try:
             fa = open(falname, 'r')
             with fa:
@@ -86,7 +85,8 @@ class Window(QMainWindow):
 
     @pyqtSlot()
     def save(self):
-        falname = QFileDialog.getSaveFileName(self, 'Сохранить файл', '', 'Все файлы (*.*);;Текстовый файл (*.txt);;Python файлы (*.py)')[0]
+        falname = QFileDialog.getSaveFileName(self, 'Сохранить файл', '',
+                                              'Все файлы (*.*);;Текстовый файл (*.txt);;Python файлы (*.py)')[0]
         try:
             fa = open(falname, 'w')
             text = self.text_edit.toPlainText()
@@ -140,13 +140,24 @@ class Window(QMainWindow):
         self.file.setStyleSheet('''color: #fff; background-color: #000''')
         self.setting.setStyleSheet('''color: #fff; background-color: #000''')
 
-    def openaa(self):
-        openAboutAuthor = aboutАuthor(self)
-        openAboutAuthor.exec_()
+    def openAboutAuthor(self):
+        textAboutAuthor = "Автор:<br/>" \
+                         "NiktoX2 (НиктоХ2)<br/>" \
+                         "Интернет"
+
+        self.msgBoxAboutAuthor = QMessageBox()
+        self.msgBoxAboutAuthor.setText(textAboutAuthor)
+        self.msgBoxAboutAuthor.setWindowTitle("Автор")
+        self.msgBoxAboutAuthor.exec()
 
     def openAboutApp(self):
-        openAboutApp = aboutAppWindow(self)
-        openAboutApp.exec_()
+        text_about_app = "Блокнот<br/>" \
+                         "Версия 1.0" \
+                         ""
+        self.msgBoxAboutApp = QMessageBox()
+        self.msgBoxAboutApp.setText(text_about_app)
+        self.msgBoxAboutApp.setWindowTitle("Об приложении")
+        self.msgBoxAboutApp.exec()
 
 def appstart():
     import sys
