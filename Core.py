@@ -1,6 +1,5 @@
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtCore import pyqtSlot, QCoreApplication
+from PyQt5.QtWidgets import QMainWindow, QTextEdit, QAction, QFileDialog, QFontDialog, QApplication, QMessageBox
 
 class Window(QMainWindow):
     def __init__(self, parent=None):
@@ -86,7 +85,7 @@ class Window(QMainWindow):
     @pyqtSlot()
     def save(self):
         falname = QFileDialog.getSaveFileName(self, 'Сохранить файл', '',
-                                              'Все файлы (*.*);;Текстовый файл (*.txt);;Python файлы (*.py)')[0]
+                                              'Текстовый файл (*.txt);;Python файлы (*.py);;lost (*.niktox2)')[0]
         try:
             fa = open(falname, 'w')
             text = self.text_edit.toPlainText()
@@ -116,6 +115,8 @@ class Window(QMainWindow):
         self.lang.setTitle(translate("self", "Язык"))
 
         self.about.setTitle(translate("self", "Помощь"))
+        self.aboutAuthor.setText(translate("self", "Автор"))
+        self.aboutApp.setText(translate("self", "Об приложении"))
 
     def setLangEng(self):
         translate = QCoreApplication.translate
@@ -132,6 +133,8 @@ class Window(QMainWindow):
         self.lang.setTitle(translate("self", "Lang"))
 
         self.about.setTitle(translate("self", "Help"))
+        self.aboutAuthor.setText(translate("self", "Author"))
+        self.aboutApp.setText(translate("self", "About the app"))
 
     def appStile(self):
         self.setStyleSheet("background-color: #000")
@@ -152,19 +155,18 @@ class Window(QMainWindow):
 
     def openAboutApp(self):
         text_about_app = "Блокнот<br/>" \
-                         "Версия 1.0" \
-                         ""
+                         "Версия 1.0<br/>" \
+                         "Вожможно никогда доделано не будет"
         self.msgBoxAboutApp = QMessageBox()
         self.msgBoxAboutApp.setText(text_about_app)
         self.msgBoxAboutApp.setWindowTitle("Об приложении")
         self.msgBoxAboutApp.exec()
 
 def appstart():
-    import sys
-    app = QApplication(sys.argv)
+    app = QApplication([])
     main = Window()
     main.show()
-    sys.exit(app.exec_())
+    app.exec_()
 
 if __name__ == "__main__":
     appstart()
