@@ -1,32 +1,117 @@
-from PyQt5.QtCore import pyqtSlot, QCoreApplication
-from PyQt5.QtWidgets import QMainWindow, QTextEdit, QAction, QFileDialog, QFontDialog, QApplication, QMessageBox
+import webbrowser
 
-class Window(QMainWindow):
+from PyQt5.QtCore import pyqtSlot
+import PyQt5.QtWidgets
+from PyQt5.QtGui import QFont
+
+openActionRu = "Открыть"
+openActionEng = "Open"
+saveActionRu = "Сохранить"
+saveActionEng = "Save"
+fontActionRu = "Шрифт"
+aboutAppRu = "Об приложении"
+aboutAppEng = "About the app"
+textAboutAppRu = "Блокнот<br/>Версия 1.0<br/>Автор: NiktoX2 (НиктоХ2)<br/>"
+textAboutAppEng = "Note<br/>Version 1.0<br/>Author: NiktoX2 (НиктоХ2)<br/>"
+openFileSelectionRu = 'Все файлы (*.*);;Текстовый файл (*.txt);;Python файлы (*.py)'
+openFileSelectionEng = 'All files (*.*);;Text file (*.txt);;Python файлы (*.py)'
+saveFileSelectionRu = 'Текстовый файл (*.txt);;Python файлы (*.py);;lost (*.niktox2)'
+saveFileSelectionEng = 'Text file (*.txt);;Python files (*.py);;lost (*.niktox2)'
+
+
+class Window(PyQt5.QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        QMainWindow.__init__(self, parent)
-
+        PyQt5.QtWidgets.QMainWindow.__init__(self, parent)
+        # размер / имя / текстовый редактор
         self.resize(700, 400)
-        self.setWindowTitle("Блокнот")
-        self.text_edit = QTextEdit(self)
+        # self.setWindowTitle("Блокнот")
+        self.text_edit = PyQt5.QtWidgets.QTextEdit(self)
         self.setCentralWidget(self.text_edit)
 
-        f = self.text_edit.font()
-        f.setPointSize(16)
-        self.text_edit.setFont(f)
+        # по умолчанию размер
+        self.f = self.text_edit.font()
+        self.f.setPointSize(16)
+        self.f.setFamily("Arial")
+        self.text_edit.setFont(self.f)
 
+        # установка стиля для редактора
         self.styleFont = self.text_edit
 
+        # menu
+        self.menubar = self.menuBar()
+        self.file = self.menubar.addMenu("")
+        # self.file = self.menubar.addMenu("Файл")
+        self.setting = self.menubar.addMenu("")
+        # self.setting = self.menubar.addMenu("Настройки")
+        self.lang = self.menubar.addMenu("")
+        # self.lang = self.menubar.addMenu("Язык")
+        self.about = self.menubar.addMenu("")
+        # self.about = self.menubar.addMenu("Помощь")
+
+        # Toolbar
+        self.newAction = PyQt5.QtWidgets.QAction("Новый файл", self)
+        self.openAction = PyQt5.QtWidgets.QAction(openActionRu, self)
+        self.saveAction = PyQt5.QtWidgets.QAction(saveActionRu, self)
+        self.fontAction = PyQt5.QtWidgets.QAction(fontActionRu, self)
+        self.langRu = PyQt5.QtWidgets.QAction("Ru", self)
+        self.langEng = PyQt5.QtWidgets.QAction("Eng", self)
+        self.aboutApp = PyQt5.QtWidgets.QAction(aboutAppRu, self)
+        self.siteVk = PyQt5.QtWidgets.QAction("", self)
+        # self.siteVk = PyQt5.QtWidgets.QAction("Vk Автора", self)
+        self.siteGithub = PyQt5.QtWidgets.QAction("", self)
+        # self.siteGithub = PyQt5.QtWidgets.QAction("Исходный код (Github)", self)
+        self.msgBoxAboutAuthor = PyQt5.QtWidgets.QMessageBox()
+        self.msgBoxAboutApp = PyQt5.QtWidgets.QMessageBox()
+
+        # variables язык \почти/ по умолчанию
+        # rus = 0, "rus"
+        # eng = 1, "eng"
+        # запуск с выбраным языком
+        self.setGlobalLang = 0
+        # переключение языка в приложении
+        self.langVariables = self.setGlobalLang
+
+        # подключить
         self.Toolbar()
         self.Menubar()
         self.appStile()
 
-    def Menubar(self):
-        self.menubar = self.menuBar()
-        self.file = self.menubar.addMenu("Файл")
-        self.setting = self.menubar.addMenu("Настройки")
-        self.lang = self.menubar.addMenu("Язык")
-        self.about = self.menubar.addMenu("Помощь")
+        if self.setGlobalLang == 0:
+            self.setWindowTitle("Блокнот")
 
+            self.file.setTitle("Файл")
+            self.newAction.setText("Новый файл")
+            self.openAction.setText(openActionRu)
+            self.saveAction.setText(saveActionRu)
+
+            self.setting.setTitle("Настройки")
+            self.fontAction.setText(fontActionRu)
+
+            self.lang.setTitle("Язык")
+
+            self.about.setTitle("Помощь")
+            self.aboutApp.setText(aboutAppRu)
+            self.siteVk.setText("Vk Автора")
+            self.siteGithub.setText("Исходный код (Github)")
+        else:
+            self.setWindowTitle("Note")
+
+            self.file.setTitle("File")
+            self.newAction.setText("New")
+            self.openAction.setText(openActionEng)
+            self.saveAction.setText(saveActionEng)
+
+            self.setting.setTitle("Setting")
+            self.fontAction.setText("Font")
+
+            self.lang.setTitle("Lang")
+
+            self.about.setTitle("Help")
+            self.aboutApp.setText(aboutAppEng)
+            self.siteVk.setText("Vk About")
+            self.siteGithub.setText("Source (Github)")
+
+    def Menubar(self):
         self.file.addAction(self.newAction)
         self.file.addAction(self.openAction)
         self.file.addAction(self.saveAction)
@@ -36,137 +121,166 @@ class Window(QMainWindow):
         self.lang.addAction(self.langRu)
         self.lang.addAction(self.langEng)
 
-        self.about.addAction(self.aboutAuthor)
         self.about.addAction(self.aboutApp)
+        self.about.addAction(self.siteVk)
+        self.about.addAction(self.siteGithub)
 
     def Toolbar(self):
-        self.newAction = QAction("Новый файл", self)
         self.newAction.triggered.connect(self.new)
         self.newAction.setShortcut("Ctrl+N")
 
-        self.openAction = QAction("Открыть", self)
         self.openAction.triggered.connect(self.open)
         self.openAction.setShortcut("Ctrl+O")
 
-        self.saveAction = QAction("Сохранить", self)
         self.saveAction.triggered.connect(self.save)
         self.saveAction.setShortcut("Ctrl+S")
 
-        self.fontAction = QAction("Шрифт", self)
         self.fontAction.triggered.connect(self.fontText)
 
-        self.langRu = QAction("Ru", self)
         self.langRu.triggered.connect(self.setLangRu)
-        self.langEng = QAction("Eng", self)
         self.langEng.triggered.connect(self.setLangEng)
 
-        self.aboutAuthor = QAction("Автор", self)
-        self.aboutAuthor.triggered.connect(self.openAboutAuthor)
-        self.aboutApp = QAction("Об приложении", self)
         self.aboutApp.triggered.connect(self.openAboutApp)
+        self.siteVk.triggered.connect(lambda: webbrowser.open('https://vk.com/niktox2'))
+        self.siteGithub.triggered.connect(lambda: webbrowser.open('https://github.com/NiktoX2/note-pythone'))
 
     def new(self):
         window = Window(self)
+        window.resize(600, 300)
         window.show()
 
     @pyqtSlot()
     def open(self):
-        falname = QFileDialog.getOpenFileName(self, 'Открыть файл', '',
-                                              'Все файлы (*.*);;Текстовый файл (*.txt);;Python файлы (*.py)')[0]
-        try:
-            fa = open(falname, 'r')
-            with fa:
-                data = fa.read()
-                self.text_edit.setText(data)
-            fa.close()
-        except FileNotFoundError:
-            print("Отмена")
+        if self.langVariables == 0:
+            falname = PyQt5.QtWidgets.QFileDialog.getOpenFileName(self, openActionRu, '', openFileSelectionRu)[0]
+            try:
+                fa = open(falname, 'r')
+                with fa:
+                    data = fa.read()
+                    self.text_edit.setText(data)
+                fa.close()
+            except FileNotFoundError:
+                print("FileNotFoundError")
+        else:
+            falname = PyQt5.QtWidgets.QFileDialog.getOpenFileName(self, openActionEng, '', openFileSelectionEng)[0]
+            try:
+                fa = open(falname, 'r')
+                with fa:
+                    data = fa.read()
+                    self.text_edit.setText(data)
+                fa.close()
+            except FileNotFoundError:
+                print("FileNotFoundError")
 
     @pyqtSlot()
     def save(self):
-        falname = QFileDialog.getSaveFileName(self, 'Сохранить файл', '',
-                                              'Текстовый файл (*.txt);;Python файлы (*.py);;lost (*.niktox2)')[0]
-        try:
-            fa = open(falname, 'w')
-            text = self.text_edit.toPlainText()
-            fa.write(text)
-            fa.close()
-        except FileNotFoundError:
-            print("Отмена")
+        if self.langVariables == 0:
+            falname = PyQt5.QtWidgets.QFileDialog.getSaveFileName(self, saveActionRu, '', saveFileSelectionRu)[0]
+            try:
+                fa = open(falname, 'w', encoding='utf-8')
+                text = self.text_edit.toPlainText()
+                fa.write(text)
+                fa.close()
+            except FileNotFoundError:
+                print("FileNotFoundError")
+        else:
+            falname = PyQt5.QtWidgets.QFileDialog.getSaveFileName(self, saveActionEng, '', saveFileSelectionEng)[0]
+            try:
+                fa = open(falname, 'w', encoding='utf-8')
+                text = self.text_edit.toPlainText()
+                fa.write(text)
+                fa.close()
+            except FileNotFoundError:
+                print("FileNotFoundError")
 
     @pyqtSlot()
     def fontText(self):
-        font, ok = QFontDialog.getFont()
+        self.f, ok = PyQt5.QtWidgets.QFontDialog.getFont(QFont(self.f), self)
         if ok:
-            self.styleFont.setFont(font)
+            self.styleFont.setFont(self.f)
 
     def setLangRu(self):
-        translate = QCoreApplication.translate
-        self.setWindowTitle(translate("self", "Блокнот"))
+        if self.langVariables == 1:
+            self.setWindowTitle("Блокнот")
 
-        self.file.setTitle(translate("self", "Файл"))
-        self.newAction.setText(translate("self", "Новый файл"))
-        self.openAction.setText(translate("self", "Открыть"))
-        self.saveAction.setText(translate("self", "Сохранить"))
+            self.file.setTitle("Файл")
+            self.newAction.setText("Новый файл")
+            self.openAction.setText(openActionRu)
+            self.saveAction.setText(saveActionRu)
 
-        self.setting.setTitle(translate("self", "Настройки"))
-        self.fontAction.setText(translate("self", "Шрифт"))
+            self.setting.setTitle("Настройки")
+            self.fontAction.setText(fontActionRu)
 
-        self.lang.setTitle(translate("self", "Язык"))
+            self.lang.setTitle("Язык")
 
-        self.about.setTitle(translate("self", "Помощь"))
-        self.aboutAuthor.setText(translate("self", "Автор"))
-        self.aboutApp.setText(translate("self", "Об приложении"))
+            self.about.setTitle("Помощь")
+            self.aboutApp.setText(aboutAppRu)
+            self.siteVk.setText("Vk Автора")
+            self.siteGithub.setText("Исходный код (Github)")
+            self.langVariables = 0
 
     def setLangEng(self):
-        translate = QCoreApplication.translate
-        self.setWindowTitle(translate("self", "Note"))
+        if self.langVariables == 0:
+            self.setWindowTitle("Note")
 
-        self.file.setTitle(translate("self", "File"))
-        self.newAction.setText(translate("self", "New"))
-        self.openAction.setText(translate("self", "Open"))
-        self.saveAction.setText(translate("self", "Save"))
+            self.file.setTitle("File")
+            self.newAction.setText("New")
+            self.openAction.setText(openActionEng)
+            self.saveAction.setText(saveActionEng)
 
-        self.setting.setTitle(translate("self", "Setting"))
-        self.fontAction.setText(translate("self", "Font"))
+            self.setting.setTitle("Setting")
+            self.fontAction.setText("Font")
 
-        self.lang.setTitle(translate("self", "Lang"))
+            self.lang.setTitle("Lang")
 
-        self.about.setTitle(translate("self", "Help"))
-        self.aboutAuthor.setText(translate("self", "Author"))
-        self.aboutApp.setText(translate("self", "About the app"))
-
-    def appStile(self):
-        self.setStyleSheet("background-color: #000")
-        self.text_edit.setStyleSheet('''color: #fff; border-style: none''')
-        self.menubar.setStyleSheet('''color: #fff; background-color: #000''')
-        self.file.setStyleSheet('''color: #fff; background-color: #000''')
-        self.setting.setStyleSheet('''color: #fff; background-color: #000''')
-
-    def openAboutAuthor(self):
-        textAboutAuthor = "Автор:<br/>" \
-                         "NiktoX2 (НиктоХ2)<br/>" \
-                         "Интернет"
-
-        self.msgBoxAboutAuthor = QMessageBox()
-        self.msgBoxAboutAuthor.setText(textAboutAuthor)
-        self.msgBoxAboutAuthor.setWindowTitle("Автор")
-        self.msgBoxAboutAuthor.exec()
+            self.about.setTitle("Help")
+            self.aboutApp.setText(aboutAppEng)
+            self.siteVk.setText("Vk About")
+            self.siteGithub.setText("Source (Github)")
+            self.langVariables = 1
 
     def openAboutApp(self):
-        text_about_app = "Блокнот<br/>" \
-                         "Версия 1.0<br/>" \
-                         "Вожможно никогда доделано не будет"
-        self.msgBoxAboutApp = QMessageBox()
-        self.msgBoxAboutApp.setText(text_about_app)
-        self.msgBoxAboutApp.setWindowTitle("Об приложении")
-        self.msgBoxAboutApp.exec()
+        if self.langVariables == 0:
+            self.msgBoxAboutApp.setText(textAboutAppRu)
+            self.msgBoxAboutApp.setWindowTitle(aboutAppRu)
+            self.msgBoxAboutApp.exec()
+        else:
+            self.msgBoxAboutApp.setText(textAboutAppEng)
+            self.msgBoxAboutApp.setWindowTitle(aboutAppEng)
+            self.msgBoxAboutApp.exec()
 
-def appstart():
-    app = QApplication([])
+    def appStile(self):
+        self.setStyleSheet("""
+        /* текстовый редактор */
+        QTextEdit {background-color: #000; color: #fff; border-style: #000}
+        /* фон скрола */
+        QScrollBar {width: 8px; background-color: #000}
+        /* фон скрола чтоб точно установился*/
+        QScrollBar::add-page, QScrollBar::sub-page{background: none}
+        /* сам скрол */
+        QScrollBar::handle {background-color: #fff; border-radius: 4px}
+        /* кнопки чтоб видно не было, но они все равно работают :( */
+        QScrollBar::add-line, QScrollBar::sub-line {border: none;background: none}
+        /* меню в целом */
+        QMenuBar {background-color: #000;color: #fff;}
+        /* кнопки */
+        QMenuBar::item {background-color: #000;color: rgb(255,255,255)}
+        /* цвет кнопок при наведении */
+        QMenuBar::item::selected {background-color: #262626}
+        /* цвет всплывающего меню */
+        QMenu {background-color: #000;color: rgb(255,255,255)}
+        /* в меню кнопки при наведении */
+        QMenu::item::selected {background-color: #262626}
+        QFontDialog {}
+        """)
+
+
+def appStart():
+    app = PyQt5.QtWidgets.QApplication([])
     main = Window()
     main.show()
     app.exec_()
 
+
 if __name__ == "__main__":
-    appstart()
+    appStart()
