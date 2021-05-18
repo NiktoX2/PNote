@@ -1,6 +1,6 @@
 import webbrowser
 
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, QTimer
 import PyQt5.QtWidgets
 from PyQt5.QtGui import QFont
 
@@ -68,6 +68,8 @@ class Window(PyQt5.QtWidgets.QMainWindow):
         self.setGlobalLang = 0
         # переключение языка в приложении
         self.langVariables = self.setGlobalLang
+        # инфа о том, сохранен ли файл
+        self.fileSeve = None
 
         # подключить
         self.Toolbar()
@@ -131,6 +133,13 @@ class Window(PyQt5.QtWidgets.QMainWindow):
         window.resize(600, 300)
         window.show()
 
+    def setWinTiRu(self):
+        self.setWindowTitle("Блокнот")
+
+    def setWinTiEng(self):
+        note = "Note"
+        self.setWindowTitle(note)
+
     @pyqtSlot()
     def open(self):
         if self.langVariables == 0:
@@ -142,7 +151,7 @@ class Window(PyQt5.QtWidgets.QMainWindow):
                     self.text_edit.setText(data)
                 fa.close()
             except FileNotFoundError:
-                print("FileNotFoundError")
+                pass
         else:
             falname = PyQt5.QtWidgets.QFileDialog.getOpenFileName(self, "Open", '', openFileSelectionEng)[0]
             try:
@@ -152,28 +161,46 @@ class Window(PyQt5.QtWidgets.QMainWindow):
                     self.text_edit.setText(data)
                 fa.close()
             except FileNotFoundError:
-                print("FileNotFoundError")
+                pass
 
     @pyqtSlot()
     def save(self):
         if self.langVariables == 0:
-            falname = PyQt5.QtWidgets.QFileDialog.getSaveFileName(self, "Сохранить", '', saveFileSelectionRu)[0]
-            try:
-                fa = open(falname, 'w', encoding='utf-8')
+            if self.fileSeve is None:
+                self.falnameRu = PyQt5.QtWidgets.QFileDialog.getSaveFileName(self, "Сохранить", '', saveFileSelectionRu)[0]
+                try:
+                    fa = open(self.falnameRu, 'w', encoding='utf-8')
+                    text = self.text_edit.toPlainText()
+                    fa.write(text)
+                    fa.close()
+                except FileNotFoundError:
+                    pass
+                self.fileSeve = 1
+            else:
+                fa = open(self.falnameRu, 'w', encoding='utf-8')
                 text = self.text_edit.toPlainText()
                 fa.write(text)
                 fa.close()
-            except FileNotFoundError:
-                print("FileNotFoundError")
+                self.setWindowTitle("Блокнот - Файл сохранен")
+                QTimer.singleShot(3000, self.setWinTiRu)
         else:
-            falname = PyQt5.QtWidgets.QFileDialog.getSaveFileName(self, "Save", '', saveFileSelectionEng)[0]
-            try:
-                fa = open(falname, 'w', encoding='utf-8')
+            if self.fileSeve is None:
+                self.falnameEng = PyQt5.QtWidgets.QFileDialog.getSaveFileName(self, "Save", '', saveFileSelectionEng)[0]
+                try:
+                    fa = open(self.falnameEng, 'w', encoding='utf-8')
+                    text = self.text_edit.toPlainText()
+                    fa.write(text)
+                    fa.close()
+                except FileNotFoundError:
+                    pass
+                self.fileSeve = 1
+            else:
+                fa = open(self.falnameEng, 'w', encoding='utf-8')
                 text = self.text_edit.toPlainText()
                 fa.write(text)
                 fa.close()
-            except FileNotFoundError:
-                print("FileNotFoundError")
+                self.setWindowTitle("Note - File saved")
+                QTimer.singleShot(3000, self.setWinTiEng)
 
     @pyqtSlot()
     def fontText(self):
