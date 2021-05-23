@@ -1,11 +1,30 @@
-import webbrowser
-
 from PyQt5.QtCore import pyqtSlot, QTimer
 import PyQt5.QtWidgets
 from PyQt5.QtGui import QFont
+import webbrowser
 
-textAboutAppRu = "Блокнот<br/>Версия 1.0<br/>Автор: NiktoX2 (НиктоХ2)<br/>"
-textAboutAppEng = "Note<br/>Version 1.0<br/>Author: NiktoX2 (НиктоХ2)<br/>"
+appNameRu = "Блокнот"
+appNameEng = "Note"
+textAboutAppRu = "<center>" \
+                 "<h3>Блокнот</h3>" \
+                 "Автор: NiktoX2 (НиктоХ2)<br/>" \
+                 "Версия 1.1" \
+                 "<center><h3>Добавлено:<h3></center>" \
+                 "Переключение темы" \
+                 "<center><h3>Изменено:<h3></center>" \
+                 "Меню - перенос пункта Язык в пункт Настройки<br/>" \
+                 "Прочие незначительные изменения" \
+                 "</center>"
+textAboutAppEng = "<center>" \
+                  "<h3>Note</h3>" \
+                  "Author: NiktoX2 (НиктоХ2)<br/>" \
+                  "Version 1.1" \
+                  "<center><h3>Add:<h3></center>" \
+                  "Switching theme" \
+                  "<center><h3>Changed:<h3></center>" \
+                  "Menu - move item Language to item Settings<br/>" \
+                  "Other minor changes" \
+                  "</center>"
 openFileSelectionRu = 'Все файлы (*.*);;Текстовый файл (*.txt);;Python файлы (*.py)'
 openFileSelectionEng = 'All files (*.*);;Text file (*.txt);;Python файлы (*.py)'
 saveFileSelectionRu = 'Текстовый файл (*.txt);;Python файлы (*.py);;lost (*.niktox2)'
@@ -49,11 +68,11 @@ setStyleWrite = """
         /* кнопки */
         QMenuBar::item {background-color: #fff; color: #000}
         /* цвет кнопок при наведении */
-        QMenuBar::item::selected {background-color: #262626}
+        QMenuBar::item::selected {background-color: #858585}
         /* цвет всплывающего меню */
-        QMenu {background-color: #000;color: rgb(255,255,255)}
+        QMenu {background-color: #fff; color: #000}
         /* в меню кнопки при наведении */
-        QMenu::item::selected {background-color: #262626}
+        QMenu::item::selected {background-color: #858585}
         QFontDialog {}
         """
 
@@ -103,7 +122,7 @@ class Window(PyQt5.QtWidgets.QMainWindow):
         # переключение языка в приложении
         self.langVariables = self.setGlobalLang
         if self.setGlobalLang == 0:
-            self.setWindowTitle("Блокнот")
+            self.setWindowTitle(appNameRu)
             self.file.setTitle("Файл")
             self.newAction.setText("Новый файл")
             self.openAction.setText("Открыть")
@@ -119,7 +138,7 @@ class Window(PyQt5.QtWidgets.QMainWindow):
             self.siteVk.setText("Vk Автора")
             self.siteGithub.setText("Исходный код (Github)")
         else:
-            self.setWindowTitle("Note")
+            self.setWindowTitle(appNameEng)
             self.file.setTitle("File")
             self.newAction.setText("New")
             self.openAction.setText("Open")
@@ -138,7 +157,7 @@ class Window(PyQt5.QtWidgets.QMainWindow):
         # стиль приложения по умалчанию
         # Black = 0 \\\ черный
         # Write = 1 \\\ белый
-        self.styleApp = 1
+        self.styleApp = 0
         if self.styleApp == 0:
             self.setStyleSheet(setStyleBlack)
         else:
@@ -183,11 +202,10 @@ class Window(PyQt5.QtWidgets.QMainWindow):
         window.show()
 
     def setWinTiRu(self):
-        self.setWindowTitle("Блокнот")
+        self.setWindowTitle(appNameRu)
 
     def setWinTiEng(self):
-        note = "Note"
-        self.setWindowTitle(note)
+        self.setWindowTitle(appNameEng)
 
     def setBlackApp(self):
         self.setStyleSheet(setStyleBlack)
@@ -265,7 +283,7 @@ class Window(PyQt5.QtWidgets.QMainWindow):
 
     def setLangRu(self):
         if self.langVariables == 1:
-            self.setWindowTitle("Блокнот")
+            self.setWindowTitle(appNameRu)
             self.file.setTitle("Файл")
             self.newAction.setText("Новый файл")
             self.openAction.setText("Открыть")
@@ -281,7 +299,7 @@ class Window(PyQt5.QtWidgets.QMainWindow):
 
     def setLangEng(self):
         if self.langVariables == 0:
-            self.setWindowTitle("Note")
+            self.setWindowTitle(appNameEng)
             self.file.setTitle("File")
             self.newAction.setText("New")
             self.openAction.setText("Open")
