@@ -7,6 +7,7 @@ class mainWindow(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self)
         uic.loadUi('mainWindow.ui', self)
         self.setWindowTitle("Блокнот")
+        self.setWindowIcon(QtGui.QIcon("icon.ico"))
         self.setMinimumSize(220, 200)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         # self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
@@ -55,8 +56,7 @@ class mainWindow(QtWidgets.QWidget):
     @pyqtSlot()
     def saveFile(self):
         if self.fileSeve is None:
-            self.falnameRu = \
-            QtWidgets.QFileDialog.getSaveFileName(self, "Сохранить", '', 'Текстовый файл (*.txt);;Python файлы (*.py);;lost (*.niktox2)')[0]
+            self.falnameRu = QtWidgets.QFileDialog.getSaveFileName(self, "Сохранить", '', 'Текстовый файл (*.txt);;Python файлы (*.py);;lost (*.niktox2)')[0]
             try:
                 file = open(self.falnameRu, 'w', encoding='utf-8')
                 text = self.textEdit.toPlainText()
@@ -77,6 +77,7 @@ class openWindowSetting(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self)
         uic.loadUi('settingWindow.ui', self)
         self.setWindowTitle("Настройки")
+        self.setWindowIcon(QtGui.QIcon("icon.ico"))
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         # self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
